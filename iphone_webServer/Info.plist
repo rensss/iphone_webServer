@@ -34,7 +34,7 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>是否允许此App使用你的相机?</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
+	<key>NSPhotoLibraryUsageDescription</key>
 	<string>是否允许此App访问你的媒体资料库?</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

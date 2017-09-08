@@ -37,26 +37,12 @@
     [self.view addSubview:self.tableView];
     
     self.addressLabel.text = [NSString stringWithFormat:@"浏览器访问:%@",self.webUploader.serverURL];
-    
-//    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"浏览器访问:" message:self.webUploader.serverURL.absoluteString preferredStyle:UIAlertControllerStyleAlert];
-    
-//    __weak typeof(self) weakSelf = self;
-//    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:nil];
-//    [alertController addAction:cancelAction];
-//
-//    UIAlertAction *copyAction = [UIAlertAction actionWithTitle:@"复制" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-//        [pasteboard setString:weakSelf.webUploader.serverURL.absoluteString];
-//    }];
-//    [alertController addAction:copyAction];
-//
-//    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    self.addressLabel.frame = CGRectMake(50, 65, self.view.frame.size.width - 100, 25);
+    self.addressLabel.frame = CGRectMake(50, self.navigationController.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height + 1, self.view.frame.size.width - 100, 25);
     
     CGFloat addressLabelMaxY = self.addressLabel.frame.size.height + self.addressLabel.frame.origin.y;
     
@@ -199,25 +185,29 @@
     UIImage *image = [UIImage imageWithContentsOfFile:path];
     
     CGSize size = CGSizeMake(image.size.width, image.size.height);
+    
     CGFloat maxWidth = self.view.frame.size.width - 60;
     CGFloat maxHeight = self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - 60;
     
-    if (size.width > maxWidth) {
-        size.width = maxWidth;
-        size.height = image.size.height * maxWidth / image.size.width;
-        
-        if (size.height > maxHeight) {
-            size.height = maxHeight;
-#warning -bug- 横屏高度不正确
-            size.width = size.height * size.width / maxHeight;
+    if (size.width > size.height) {
+        if (size.width > maxWidth) {
+            size.width = maxWidth;
+            size.height = image.size.height * maxWidth / image.size.width;
+            if (size.height > maxHeight) {
+                size.height = maxHeight;
+                size.width = size.height * image.size.width / image.size.height;
+            }
         }
     }else {
         if (size.height > maxHeight) {
             size.height = maxHeight;
             size.width = size.height * image.size.width / image.size.height;
+            if (size.width > maxWidth) {
+                size.width = maxWidth;
+                size.height = image.size.height * maxWidth / image.size.width;
+            }
         }
     }
-    
     return size;
 }
 

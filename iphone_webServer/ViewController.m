@@ -50,9 +50,17 @@
     switch (button.tag - 1000) {
         case 0:
         {
-            // Start server on port 8080
-            [self.webServer startWithPort:8080 bonjourName:nil];
-            NSLog(@"Visit %@ in your web browser\n", self.webServer.serverURL);
+            if ([self.webServer isRunning]) {
+                [self.webServer stop];
+            }else {
+                // Start server on port 8080
+                [self.webServer startWithPort:8080 bonjourName:nil];
+                NSLog(@"Visit %@ in your web browser\n", self.webServer.serverURL);
+                
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"已打开服务器" message:[NSString stringWithFormat:@"%@",self.webServer.serverURL] delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil];
+                
+                [alert show];
+            }
         }
             break;
         case 1:
