@@ -24,9 +24,9 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     [self.view addSubview:self.imageView];
-    
     self.imageView.userInteractionEnabled = YES;
-    UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress)];
+
+	UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress)];
     [self.imageView addGestureRecognizer:gesture];
 }
 
