@@ -10,6 +10,6 @@
 
 @interface R_ImagePreviewViewController : UIViewController
 
-@property (nonatomic, strong) UIImageView *imageView; /**< 图*/
+@property (nonatomic, copy) NSString *path; /**< 图片路径*/
 
 @end

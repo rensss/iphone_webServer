@@ -30,6 +30,13 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
+    UIButton *leftButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
+    [leftButton setTitle:@"完成" forState:UIControlStateNormal];
+    [leftButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [leftButton addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
+    
     [self.webUploader start];
     NSLog(@"Visit %@ in your web browser", self.webUploader.serverURL);
     
@@ -47,6 +54,16 @@
     CGFloat addressLabelMaxY = self.addressLabel.frame.size.height + self.addressLabel.frame.origin.y;
     
     self.tableView.frame = CGRectMake(0, addressLabelMaxY, self.view.frame.size.width, self.view.frame.size.height - addressLabelMaxY);
+}
+
+- (void)dealloc {
+    [self.webUploader stop];
+    NSLog(@"%@ 销毁了",[self class]);
+}
+
+#pragma mark - 返回
+- (void)backClick {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - tableViewDelegate
@@ -86,9 +103,9 @@
         
         R_ImagePreviewViewController *imageVC = [[R_ImagePreviewViewController alloc] init];
         
-        imageVC.imageView = [[UIImageView alloc] initWithImage:[UIImage imageWithContentsOfFile:path]];
+        imageVC.path = path;
         
-        imageVC.preferredContentSize = [self getImageSizeWithPath:path];
+//        imageVC.preferredContentSize = [self getImageSizeWithPath:path];
         imageVC.modalPresentationStyle = UIModalPresentationPopover;
         
         UIPopoverPresentationController *popvc = imageVC.popoverPresentationController;
@@ -178,37 +195,6 @@
         [self presentViewController:alertController animated:YES completion:nil];
         return;
     }
-}
-
-- (CGSize)getImageSizeWithPath:(NSString *)path {
-    
-    UIImage *image = [UIImage imageWithContentsOfFile:path];
-    
-    CGSize size = CGSizeMake(image.size.width, image.size.height);
-    
-    CGFloat maxWidth = self.view.frame.size.width - 60;
-    CGFloat maxHeight = self.view.frame.size.height - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - 60;
-    
-    if (size.width > size.height) {
-        if (size.width > maxWidth) {
-            size.width = maxWidth;
-            size.height = image.size.height * maxWidth / image.size.width;
-            if (size.height > maxHeight) {
-                size.height = maxHeight;
-                size.width = size.height * image.size.width / image.size.height;
-            }
-        }
-    }else {
-        if (size.height > maxHeight) {
-            size.height = maxHeight;
-            size.width = size.height * image.size.width / image.size.height;
-            if (size.width > maxWidth) {
-                size.width = maxWidth;
-                size.height = image.size.height * maxWidth / image.size.width;
-            }
-        }
-    }
-    return size;
 }
 
 #pragma mark - getting

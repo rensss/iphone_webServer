@@ -12,6 +12,8 @@
 
 @interface R_ImagePreviewViewController ()
 
+@property (nonatomic, strong) UIImageView *imageView; /**< 图*/
+
 @end
 
 @implementation R_ImagePreviewViewController
@@ -22,6 +24,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     [self.view addSubview:self.imageView];
+    
     self.imageView.userInteractionEnabled = YES;
     UILongPressGestureRecognizer *gesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress)];
     [self.imageView addGestureRecognizer:gesture];
@@ -30,7 +33,11 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    self.imageView.frame = self.view.bounds;
+    CGRect frame = CGRectZero;
+    frame.size = [self getImageSizeWithPath:self.path];
+    self.imageView.frame = frame;
+    
+    self.imageView.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
 }
 
 #pragma mark - 长按手势
@@ -56,8 +63,38 @@
             }
         }
     }];
+}
+
+#pragma mark - 函数
+- (CGSize)getImageSizeWithPath:(NSString *)path {
     
+    UIImage *image = [UIImage imageWithContentsOfFile:path];
     
+    CGSize size = CGSizeMake(image.size.width, image.size.height);
+    
+    CGFloat maxWidth = self.view.frame.size.width - 10;
+    CGFloat maxHeight = self.view.frame.size.height - 10;
+    
+    if (size.width > size.height) {
+        if (size.width > maxWidth) {
+            size.width = maxWidth;
+            size.height = image.size.height * maxWidth / image.size.width;
+            if (size.height > maxHeight) {
+                size.height = maxHeight;
+                size.width = size.height * image.size.width / image.size.height;
+            }
+        }
+    }else {
+        if (size.height > maxHeight) {
+            size.height = maxHeight;
+            size.width = size.height * image.size.width / image.size.height;
+            if (size.width > maxWidth) {
+                size.width = maxWidth;
+                size.height = image.size.height * maxWidth / image.size.width;
+            }
+        }
+    }
+    return size;
 }
 
 #pragma mark - 保存到相册
@@ -74,8 +111,8 @@
     }else {
         msg = @"保存图片成功";
     }
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"保存图片结果提示"
-                                                    message:msg
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:msg
+                                                    message:nil
                                                    delegate:self
                                           cancelButtonTitle:@"确定"
                                           otherButtonTitles:nil];
@@ -131,6 +168,15 @@
             callback(NO);
         }
     }
+}
+
+#pragma mark - getting
+- (UIImageView *)imageView {
+    if (!_imageView) {
+        _imageView = [[UIImageView alloc] init];
+        _imageView.image = [UIImage imageWithContentsOfFile:self.path];
+    }
+    return _imageView;
 }
 
 - (void)didReceiveMemoryWarning {
