@@ -52,14 +52,18 @@
         {
             if ([self.webServer isRunning]) {
                 [self.webServer stop];
+                [button setTitle:@"webServer" forState:UIControlStateNormal];
             }else {
                 // Start server on port 8080
                 [self.webServer startWithPort:8080 bonjourName:nil];
                 NSLog(@"Visit %@ in your web browser\n", self.webServer.serverURL);
                 
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"已打开服务器" message:[NSString stringWithFormat:@"%@",self.webServer.serverURL] delegate:self cancelButtonTitle:@"确认" otherButtonTitles:nil];
-                
-                [alert show];
+                UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"已打开服务器" message:[NSString stringWithFormat:@"%@",self.webServer.serverURL] preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *doneAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
+                    [button setTitle:@"关闭webServer" forState:UIControlStateNormal];
+                }];
+                [alertC addAction:doneAction];
+                [self presentViewController:alertC animated:YES completion:nil];
             }
         }
             break;
@@ -148,6 +152,8 @@
         _webServerBtn = [[UIButton alloc] init];
         [_webServerBtn setTitle:@"webServer" forState:UIControlStateNormal];
         [_webServerBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        _webServerBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+        
         _webServerBtn.tag = 1000;
         _webServerBtn.layer.cornerRadius = 5;
         _webServerBtn.layer.borderColor = [UIColor lightGrayColor].CGColor;
@@ -162,6 +168,8 @@
         _webUploaderbtn = [[UIButton alloc] init];
         [_webUploaderbtn setTitle:@"webUploader" forState:UIControlStateNormal];
         [_webUploaderbtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        _webUploaderbtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+        
         _webUploaderbtn.tag = 1001;
         _webUploaderbtn.layer.cornerRadius = 5;
         _webUploaderbtn.layer.borderColor = [UIColor lightGrayColor].CGColor;

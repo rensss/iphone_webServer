@@ -207,7 +207,11 @@
 
 - (NSMutableArray *)dataArray {
     if (!_dataArray) {
-        _dataArray = [NSMutableArray arrayWithArray:[[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.documentPath error:nil]];
+        
+        NSFileManager *manager = [NSFileManager defaultManager];
+        //获取数据
+        //①只获取文件名
+        _dataArray = [NSMutableArray arrayWithArray:[manager contentsOfDirectoryAtPath:self.documentPath error:nil]];
     }
     return _dataArray;
 }
