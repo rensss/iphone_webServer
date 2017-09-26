@@ -66,7 +66,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - tableViewDelegate
+#pragma mark - 代理
 #pragma mark -- UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.dataArray.count;
