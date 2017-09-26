@@ -17,6 +17,8 @@
 
 @interface ViewController () <GCDWebServerDelegate>
 
+@property (nonatomic, strong) UIScrollView *scrollerView; /**< 滚动视图*/
+
 @property (nonatomic, strong) UIButton *webServerBtn; /**< 服务器按钮*/
 @property (nonatomic, strong) UIButton *webUploaderbtn; /**< 网页上传按钮*/
 
@@ -29,13 +31,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.view addSubview:self.webServerBtn];
-    
-    [self.view addSubview:self.webUploaderbtn];
+    [self.view addSubview:self.scrollerView];
 }
 
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
+    
+    self.scrollerView.frame = self.view.bounds;
     
     self.webServerBtn.frame = CGRectMake(100, 100, self.view.frame.size.width - 200, 45);
     
@@ -147,6 +149,18 @@
 
 
 #pragma mark - getting
+- (UIScrollView *)scrollerView {
+    if (!_scrollerView) {
+        _scrollerView = [[UIScrollView alloc] init];
+        _scrollerView.alwaysBounceVertical = YES;
+        
+        [_scrollerView addSubview:self.webServerBtn];
+        [_scrollerView addSubview:self.webUploaderbtn];
+    }
+    return _scrollerView;
+}
+
+
 - (UIButton *)webServerBtn {
     if (!_webServerBtn) {
         _webServerBtn = [[UIButton alloc] init];
