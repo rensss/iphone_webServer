@@ -66,7 +66,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - tableViewDelegate
+#pragma mark - 代理
 #pragma mark -- UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.dataArray.count;
@@ -207,7 +207,11 @@
 
 - (NSMutableArray *)dataArray {
     if (!_dataArray) {
-        _dataArray = [NSMutableArray arrayWithArray:[[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.documentPath error:nil]];
+        
+        NSFileManager *manager = [NSFileManager defaultManager];
+        //获取数据
+        //①只获取文件名
+        _dataArray = [NSMutableArray arrayWithArray:[manager contentsOfDirectoryAtPath:self.documentPath error:nil]];
     }
     return _dataArray;
 }
