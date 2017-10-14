@@ -40,7 +40,7 @@
     self.scrollerView.frame = self.view.bounds;
     
     self.webServerBtn.frame = CGRectMake(100, 100, self.view.width - 200, 45);
-	
+	self.webUploaderbtn.frame = self.webServerBtn.frame;
     self.webUploaderbtn.y = self.webServerBtn.maxY + 75;
 }
 
