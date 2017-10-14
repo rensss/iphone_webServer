@@ -39,11 +39,9 @@
     
     self.scrollerView.frame = self.view.bounds;
     
-    self.webServerBtn.frame = CGRectMake(100, 100, self.view.frame.size.width - 200, 45);
-    
-    CGRect frame = self.webServerBtn.frame;
-    frame.origin.y += 75;
-    self.webUploaderbtn.frame = frame;
+    self.webServerBtn.frame = CGRectMake(100, 100, self.view.width - 200, 45);
+	
+    self.webUploaderbtn.y = self.webServerBtn.maxY + 75;
 }
 
 #pragma mark - 点击事件
