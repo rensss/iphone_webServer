@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = 'DEDB1F66D68FFFE3CD49C1C679EDE0DD'
-               BlueprintName = 'Pods-iphone_webServer'
+               BlueprintIdentifier = 'F5F0C871CB9186A523985FFD6AD9E6EC'
+               BlueprintName = 'R_category'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libPods-iphone_webServer.a'>
+               BuildableName = 'libR_category.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
