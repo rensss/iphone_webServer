@@ -197,6 +197,16 @@
     }
 }
 
+#pragma mark - 点击事件
+- (void)handleTapOnLabel:(UILabel *)label {
+    
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    [pasteboard setString:self.webUploader.serverURL.absoluteString];
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"已复制到剪切板" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+    [alertView show];
+}
+
 #pragma mark - getting
 - (NSString *)documentPath {
     if (!_documentPath) {
@@ -230,6 +240,10 @@
         _addressLabel.textColor = [UIColor blueColor];
         _addressLabel.font = [UIFont systemFontOfSize:15];
         _addressLabel.textAlignment = NSTextAlignmentCenter;
+        
+        _addressLabel.userInteractionEnabled = YES;
+        [_addressLabel addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapOnLabel:)]];
+        
     }
     return _addressLabel;
 }
@@ -242,7 +256,7 @@
         _tableView.dataSource = self;
         
         _tableView.rowHeight = 80;
-        
+        _tableView.emptyImage = [UIImage imageNamed:@"empty_search"];
         _tableView.tableFooterView = [UIView new];
     }
     return _tableView;
