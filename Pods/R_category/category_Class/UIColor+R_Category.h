@@ -14,7 +14,7 @@
  *
  *  @return UIColor
  */
-+(UIColor *)colorWithRandom;
++ (UIColor *)colorWithRandom;
 
 /**
  *  生成一个随机色，alpha也是随机色
@@ -23,7 +23,7 @@
  *
  *  @return 透明度随机的颜色
  */
-+(UIColor *)colorWithRandomWithAlpha:(CGFloat) alpha;
++ (UIColor *)colorWithRandomWithAlpha:(CGFloat) alpha;
 
 /**
  *  根据十六进制字符串生成一个UIColor
@@ -44,5 +44,5 @@
  *
  *  @return UIColor
  */
-+(UIColor *)colorWithR:(CGFloat)red g:(CGFloat)green b:(CGFloat)blue alpha:(CGFloat)alpha;
++ (UIColor *)colorWithR:(CGFloat)red g:(CGFloat)green b:(CGFloat)blue alpha:(CGFloat)alpha;
 @end

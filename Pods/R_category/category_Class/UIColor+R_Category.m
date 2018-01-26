@@ -14,13 +14,11 @@
  *
  *  @return UIColor
  */
-+(UIColor *)colorWithRandom
-{
++ (UIColor *)colorWithRandom {
     return [UIColor colorWithRed:arc4random_uniform(256) / 255.0 green:arc4random_uniform(256) / 255.0 blue:arc4random_uniform(256) / 255.0 alpha:1];
 }
 
-+(UIColor *)colorWithRandomWithAlpha:(CGFloat) alpha
-{
++ (UIColor *)colorWithRandomWithAlpha:(CGFloat) alpha {
     return [UIColor colorWithRed:arc4random_uniform(256) / 255.0 green:arc4random_uniform(256) / 255.0 blue:arc4random_uniform(256) / 255.0 alpha:alpha];
 }
 
@@ -31,8 +29,7 @@
  *
  *  @return UIColor
  */
-+ (UIColor *)colorWithHexString:(NSString *)hexString
-{
++ (UIColor *)colorWithHexString:(NSString *)hexString {
     if ([hexString length] <6){//长度不合法
         return [UIColor blackColor];
     }
@@ -75,8 +72,7 @@
  *
  *  @return UIColor
  */
-+(UIColor *)colorWithR:(CGFloat)red g:(CGFloat)green b:(CGFloat)blue alpha:(CGFloat)alpha
-{
++ (UIColor *)colorWithR:(CGFloat)red g:(CGFloat)green b:(CGFloat)blue alpha:(CGFloat)alpha {
     return [UIColor colorWithRed:(red)/255.0f green:(green)/255.0f blue:(blue)/255.0f alpha:(alpha)];
 }
 @end

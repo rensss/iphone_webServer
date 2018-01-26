@@ -16,5 +16,7 @@
 #import "NSString+R_Category.h"
 #import "UIAlertController+R_Category.h"
 #import "UIButton+R_Category.h"
+#import "UIViewController+R_Category.h"
+#import "UITableView+R_Category.h"
 
 #endif /* R_categorys_h */

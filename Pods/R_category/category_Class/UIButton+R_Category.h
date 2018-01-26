@@ -10,6 +10,9 @@
 
 @interface UIButton (R_Category)
 
+/** 点击区域*/
+@property (nonatomic, assign) UIEdgeInsets hitTestEdgeInsets;
+
 /**
  *  button垂直上下显示
  */
