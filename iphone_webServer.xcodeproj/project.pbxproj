@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		106967B4201B324600CB7D39 /* R_AlertMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 106967B3201B324600CB7D39 /* R_AlertMessage.m */; };
+		106967B7201B325700CB7D39 /* R_LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 106967B6201B325700CB7D39 /* R_LoadingView.m */; };
 		1A40F7FA1F615330001E1E30 /* R_ImagePreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A40F7F91F615330001E1E30 /* R_ImagePreviewViewController.m */; };
 		1A463EE41F6135B7001C401E /* R_webUploaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A463EE31F6135B7001C401E /* R_webUploaderViewController.m */; };
 		1AFB10951F60F0DA009F49DE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AFB10941F60F0DA009F49DE /* AppDelegate.m */; };
@@ -19,6 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		106967B2201B324600CB7D39 /* R_AlertMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_AlertMessage.h; sourceTree = "<group>"; };
+		106967B3201B324600CB7D39 /* R_AlertMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = R_AlertMessage.m; sourceTree = "<group>"; };
+		106967B5201B325700CB7D39 /* R_LoadingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_LoadingView.h; sourceTree = "<group>"; };
+		106967B6201B325700CB7D39 /* R_LoadingView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = R_LoadingView.m; sourceTree = "<group>"; };
 		1A40F7F81F615330001E1E30 /* R_ImagePreviewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_ImagePreviewViewController.h; sourceTree = "<group>"; };
 		1A40F7F91F615330001E1E30 /* R_ImagePreviewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = R_ImagePreviewViewController.m; sourceTree = "<group>"; };
 		1A463EE21F6135B7001C401E /* R_webUploaderViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_webUploaderViewController.h; sourceTree = "<group>"; };
@@ -51,10 +57,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		103E7A58201B31ED0053AFFF /* Utills */ = {
+			isa = PBXGroup;
+			children = (
+				106967B2201B324600CB7D39 /* R_AlertMessage.h */,
+				106967B3201B324600CB7D39 /* R_AlertMessage.m */,
+				106967B5201B325700CB7D39 /* R_LoadingView.h */,
+				106967B6201B325700CB7D39 /* R_LoadingView.m */,
+			);
+			path = Utills;
+			sourceTree = "<group>";
+		};
 		1AFB10871F60F0DA009F49DE = {
 			isa = PBXGroup;
 			children = (
 				1AFB10921F60F0DA009F49DE /* iphone_webServer */,
+				103E7A58201B31ED0053AFFF /* Utills */,
 				1AFB10911F60F0DA009F49DE /* Products */,
 				E14C2386666CA43C6FD1270C /* Pods */,
 				B27AD3BB4936B8A26701618E /* Frameworks */,
@@ -238,7 +256,9 @@
 			files = (
 				1AFB10981F60F0DA009F49DE /* ViewController.m in Sources */,
 				1AFB10A31F60F0DA009F49DE /* main.m in Sources */,
+				106967B7201B325700CB7D39 /* R_LoadingView.m in Sources */,
 				1A463EE41F6135B7001C401E /* R_webUploaderViewController.m in Sources */,
+				106967B4201B324600CB7D39 /* R_AlertMessage.m in Sources */,
 				1AFB10951F60F0DA009F49DE /* AppDelegate.m in Sources */,
 				1A40F7FA1F615330001E1E30 /* R_ImagePreviewViewController.m in Sources */,
 			);

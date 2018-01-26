@@ -147,7 +147,7 @@
     //文件名
     BOOL blHave=[[NSFileManager defaultManager] fileExistsAtPath:path];
     if (!blHave) {
-        NSLog(@"no file");
+        RAlertMessage(@"未找到该文件", self.view);
         return ;
     }else {
         NSLog(@" have");
@@ -155,7 +155,7 @@
         if (blDele) {
             [self reloadTableView];
         }else {
-            NSLog(@"delete fail");
+            RAlertMessage(@"删除失败", self.view);
         }
     }
     
@@ -249,8 +249,7 @@
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     [pasteboard setString:self.webUploader.serverURL.absoluteString];
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:nil message:@"已复制到剪切板" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-    [alertView show];
+    RAlertMessage(@"已复制到剪切板", self.view);
 }
 
 #pragma mark - getting

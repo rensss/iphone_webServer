@@ -13,5 +13,7 @@
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 
 #import <R_category/R_categorys.h>
+#import "R_AlertMessage.h"
+#import "R_LoadingView.h"
 
 #endif /* PrefixHeader_pch */
