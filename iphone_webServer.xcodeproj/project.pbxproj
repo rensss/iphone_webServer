@@ -68,6 +68,48 @@
 			path = Utills;
 			sourceTree = "<group>";
 		};
+		106967B8201B358D00CB7D39 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		106967B9201B359B00CB7D39 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		106967BA201B35A200CB7D39 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				1AFB10961F60F0DA009F49DE /* ViewController.h */,
+				1AFB10971F60F0DA009F49DE /* ViewController.m */,
+				1A463EE21F6135B7001C401E /* R_webUploaderViewController.h */,
+				1A463EE31F6135B7001C401E /* R_webUploaderViewController.m */,
+				1A40F7F81F615330001E1E30 /* R_ImagePreviewViewController.h */,
+				1A40F7F91F615330001E1E30 /* R_ImagePreviewViewController.m */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		106967BB201B35BE00CB7D39 /* SupportingFile */ = {
+			isa = PBXGroup;
+			children = (
+				1AFB10931F60F0DA009F49DE /* AppDelegate.h */,
+				1AFB10941F60F0DA009F49DE /* AppDelegate.m */,
+				1AFB10991F60F0DA009F49DE /* Main.storyboard */,
+				1AFB109C1F60F0DA009F49DE /* Assets.xcassets */,
+				1AFB109E1F60F0DA009F49DE /* LaunchScreen.storyboard */,
+				1AFB10A11F60F0DA009F49DE /* Info.plist */,
+				1AFB10A21F60F0DA009F49DE /* main.m */,
+				1A672FFA1F9214AD008E4CA0 /* PrefixHeader.pch */,
+			);
+			path = SupportingFile;
+			sourceTree = "<group>";
+		};
 		1AFB10871F60F0DA009F49DE = {
 			isa = PBXGroup;
 			children = (
@@ -90,20 +132,10 @@
 		1AFB10921F60F0DA009F49DE /* iphone_webServer */ = {
 			isa = PBXGroup;
 			children = (
-				1AFB10931F60F0DA009F49DE /* AppDelegate.h */,
-				1AFB10941F60F0DA009F49DE /* AppDelegate.m */,
-				1AFB10961F60F0DA009F49DE /* ViewController.h */,
-				1AFB10971F60F0DA009F49DE /* ViewController.m */,
-				1A463EE21F6135B7001C401E /* R_webUploaderViewController.h */,
-				1A463EE31F6135B7001C401E /* R_webUploaderViewController.m */,
-				1A40F7F81F615330001E1E30 /* R_ImagePreviewViewController.h */,
-				1A40F7F91F615330001E1E30 /* R_ImagePreviewViewController.m */,
-				1AFB10991F60F0DA009F49DE /* Main.storyboard */,
-				1AFB109C1F60F0DA009F49DE /* Assets.xcassets */,
-				1AFB109E1F60F0DA009F49DE /* LaunchScreen.storyboard */,
-				1AFB10A11F60F0DA009F49DE /* Info.plist */,
-				1AFB10A21F60F0DA009F49DE /* main.m */,
-				1A672FFA1F9214AD008E4CA0 /* PrefixHeader.pch */,
+				106967B8201B358D00CB7D39 /* Model */,
+				106967B9201B359B00CB7D39 /* View */,
+				106967BA201B35A200CB7D39 /* Controller */,
+				106967BB201B35BE00CB7D39 /* SupportingFile */,
 			);
 			path = iphone_webServer;
 			sourceTree = "<group>";
