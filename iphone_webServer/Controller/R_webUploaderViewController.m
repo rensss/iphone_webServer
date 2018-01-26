@@ -100,14 +100,15 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+    // 文件路径
     NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
-    
+    // 文件信息
     NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
-    
+    // 文件名
     NSString *fileName = self.dataArray[indexPath.row];
+    // 文件后缀
     NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
-    
+    // 是否图片后缀
     if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
         
         R_ImagePreviewViewController *imageVC = [[R_ImagePreviewViewController alloc] init];
@@ -126,7 +127,7 @@
         [self presentViewController:imageVC animated:YES completion:nil];
         
     }else {
-        
+        // 显示文件信息
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"文件" message:[NSString stringWithFormat:@"%@",dict] preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:nil];
@@ -158,7 +159,6 @@
             RAlertMessage(@"删除失败", self.view);
         }
     }
-    
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -245,7 +245,7 @@
 
 #pragma mark - 点击事件
 - (void)handleTapOnLabel:(UILabel *)label {
-    
+    // 剪切板
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     [pasteboard setString:self.webUploader.serverURL.absoluteString];
     
