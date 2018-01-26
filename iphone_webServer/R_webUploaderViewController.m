@@ -83,6 +83,15 @@
     
     cell.textLabel.text = self.dataArray[indexPath.row];
     
+    NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
+    
+    NSString *fileName = self.dataArray[indexPath.row];
+    NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
+    
+    if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
+        cell.imageView.image = [UIImage imageWithContentsOfFile:path];
+    }
+    
     return cell;
 }
 
@@ -99,7 +108,7 @@
     NSString *fileName = self.dataArray[indexPath.row];
     NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
     
-    if ([fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
+    if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
         
         R_ImagePreviewViewController *imageVC = [[R_ImagePreviewViewController alloc] init];
         
@@ -125,6 +134,43 @@
         
         [self presentViewController:alertController animated:YES completion:nil];
     }
+}
+
+
+#pragma mark -- 删除
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
+    
+    NSFileManager* fileManager = [NSFileManager defaultManager];
+    
+    //文件名
+    BOOL blHave=[[NSFileManager defaultManager] fileExistsAtPath:path];
+    if (!blHave) {
+        NSLog(@"no file");
+        return ;
+    }else {
+        NSLog(@" have");
+        BOOL blDele= [fileManager removeItemAtPath:path error:nil];
+        if (blDele) {
+            [self reloadTableView];
+        }else {
+            NSLog(@"delete fail");
+        }
+    }
+    
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleDelete;
+}
+
+- (nullable NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return @"删除";
 }
 
 #pragma mark - GCDWebUploaderDelegate
