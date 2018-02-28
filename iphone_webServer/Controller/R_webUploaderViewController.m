@@ -8,7 +8,7 @@
 
 #import "R_webUploaderViewController.h"
 #import "R_ImagePreviewViewController.h"
-
+#import "R_FileTableViewCell.h"
 #import "GCDWebUploader.h"
 
 @interface R_webUploaderViewController () <GCDWebUploaderDelegate,UITableViewDelegate,UITableViewDataSource,UIPopoverPresentationControllerDelegate>
@@ -18,7 +18,7 @@
 @property (nonatomic, copy) NSString *documentPath; /**< 本地文件夹路径*/
 @property (nonatomic, strong) UILabel *addressLabel; /**< 地址*/
 @property (nonatomic, strong) GCDWebUploader *webUploader; /**< 网页上传*/
-
+@property (nonatomic, assign) BOOL isEditing; /**< 是否编辑*/
 @end
 
 @implementation R_webUploaderViewController
@@ -30,12 +30,19 @@
     
     self.view.backgroundColor = [UIColor whiteColor];
     
-    UIButton *leftButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
-    [leftButton setTitle:@"完成" forState:UIControlStateNormal];
-    [leftButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [leftButton addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
+    [rightButton setTitle:@"关闭" forState:UIControlStateNormal];
+    [rightButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [rightButton addTarget:self action:@selector(backClick) forControlEvents:UIControlEventTouchUpInside];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
+    
+    UIButton *leftButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 30)];
+    [leftButton setTitle:@"编辑" forState:UIControlStateNormal];
+    [leftButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [leftButton addTarget:self action:@selector(editClick) forControlEvents:UIControlEventTouchUpInside];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
     
     [self.webUploader start];
     NSLog(@"Visit %@ in your web browser", self.webUploader.serverURL);
@@ -66,6 +73,13 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+#pragma mark - 编辑
+- (void)editClick {
+    self.isEditing = !self.isEditing;
+    [self.tableView reloadData];
+    self.tableView.editing = self.isEditing;
+}
+
 #pragma mark - 代理
 #pragma mark -- UITableViewDataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -73,67 +87,64 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell"];
+    R_FileTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"R_FileTableViewCell"];
     
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"UITableViewCell"];
-        cell.textLabel.numberOfLines = 0;
-        cell.textLabel.font = [UIFont systemFontOfSize:15];
+        cell = [[R_FileTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"R_FileTableViewCell"];
     }
     
-    cell.textLabel.text = self.dataArray[indexPath.row];
-    
-    NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
-    
-    NSString *fileName = self.dataArray[indexPath.row];
-    NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
-    
-    if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
-        cell.imageView.image = [UIImage imageWithContentsOfFile:path];
-    }
-    
+    R_FileModel *file = [R_FileModel new];
+    file.fileName = self.dataArray[indexPath.row];
+    file.filePath = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
+    cell.file = file;
+    cell.isEditing = self.isEditing;
     return cell;
 }
 
 #pragma mark -- UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    // 文件路径
-    NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
-    // 文件信息
-    NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
-    // 文件名
-    NSString *fileName = self.dataArray[indexPath.row];
-    // 文件后缀
-    NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
-    // 是否图片后缀
-    if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
-        
-        R_ImagePreviewViewController *imageVC = [[R_ImagePreviewViewController alloc] init];
-        
-        imageVC.path = path;
-        
-//        imageVC.preferredContentSize = [self getImageSizeWithPath:path];
-        imageVC.modalPresentationStyle = UIModalPresentationPopover;
-        
-        UIPopoverPresentationController *popvc = imageVC.popoverPresentationController;
-        popvc.delegate = self;
-        popvc.sourceView = cell;
-        popvc.sourceRect = cell.bounds;
-        popvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
-        
-        [self presentViewController:imageVC animated:YES completion:nil];
+    if (self.isEditing) {
         
     }else {
-        // 显示文件信息
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"文件" message:[NSString stringWithFormat:@"%@",dict] preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:nil];
-        [alertController addAction:cancelAction];
-        
-        [self presentViewController:alertController animated:YES completion:nil];
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        // 文件路径
+        NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
+        // 文件信息
+        NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
+        // 文件名
+        NSString *fileName = self.dataArray[indexPath.row];
+        // 文件后缀
+        NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
+        // 是否图片后缀
+        if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
+            
+            R_ImagePreviewViewController *imageVC = [[R_ImagePreviewViewController alloc] init];
+            
+            imageVC.path = path;
+            
+            //        imageVC.preferredContentSize = [self getImageSizeWithPath:path];
+            imageVC.modalPresentationStyle = UIModalPresentationPopover;
+            
+            UIPopoverPresentationController *popvc = imageVC.popoverPresentationController;
+            popvc.delegate = self;
+            popvc.sourceView = cell;
+            popvc.sourceRect = cell.bounds;
+            popvc.permittedArrowDirections = UIPopoverArrowDirectionAny;
+            
+            [self presentViewController:imageVC animated:YES completion:nil];
+            
+        }else {
+            // 显示文件信息
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"文件" message:[NSString stringWithFormat:@"%@",dict] preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:nil];
+            [alertController addAction:cancelAction];
+            
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
     }
 }
 
@@ -166,11 +177,7 @@
 }
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return UITableViewCellEditingStyleDelete;
-}
-
-- (nullable NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return @"删除";
+    return UITableViewCellEditingStyleDelete | UITableViewCellEditingStyleInsert;
 }
 
 #pragma mark - GCDWebUploaderDelegate
@@ -230,8 +237,7 @@
 }
 
 //保存照片结果回调
-- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
-{
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
     if (error) {
         UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"保存失败" message:nil preferredStyle:UIAlertControllerStyleAlert];
         

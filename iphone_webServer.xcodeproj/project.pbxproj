@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10294AF92046A8A400A2DA43 /* R_FileTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 10294AF82046A8A400A2DA43 /* R_FileTableViewCell.m */; };
+		10294AFC2046A92800A2DA43 /* R_FileModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 10294AFB2046A92800A2DA43 /* R_FileModel.m */; };
 		106967B4201B324600CB7D39 /* R_AlertMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 106967B3201B324600CB7D39 /* R_AlertMessage.m */; };
 		106967B7201B325700CB7D39 /* R_LoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 106967B6201B325700CB7D39 /* R_LoadingView.m */; };
 		1A40F7FA1F615330001E1E30 /* R_ImagePreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A40F7F91F615330001E1E30 /* R_ImagePreviewViewController.m */; };
@@ -21,6 +23,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		10294AF72046A8A400A2DA43 /* R_FileTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_FileTableViewCell.h; sourceTree = "<group>"; };
+		10294AF82046A8A400A2DA43 /* R_FileTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = R_FileTableViewCell.m; sourceTree = "<group>"; };
+		10294AFA2046A92800A2DA43 /* R_FileModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_FileModel.h; sourceTree = "<group>"; };
+		10294AFB2046A92800A2DA43 /* R_FileModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = R_FileModel.m; sourceTree = "<group>"; };
 		106967B2201B324600CB7D39 /* R_AlertMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_AlertMessage.h; sourceTree = "<group>"; };
 		106967B3201B324600CB7D39 /* R_AlertMessage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = R_AlertMessage.m; sourceTree = "<group>"; };
 		106967B5201B325700CB7D39 /* R_LoadingView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = R_LoadingView.h; sourceTree = "<group>"; };
@@ -71,6 +77,8 @@
 		106967B8201B358D00CB7D39 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				10294AFA2046A92800A2DA43 /* R_FileModel.h */,
+				10294AFB2046A92800A2DA43 /* R_FileModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -78,6 +86,8 @@
 		106967B9201B359B00CB7D39 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				10294AF72046A8A400A2DA43 /* R_FileTableViewCell.h */,
+				10294AF82046A8A400A2DA43 /* R_FileTableViewCell.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -287,9 +297,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AFB10981F60F0DA009F49DE /* ViewController.m in Sources */,
+				10294AFC2046A92800A2DA43 /* R_FileModel.m in Sources */,
 				1AFB10A31F60F0DA009F49DE /* main.m in Sources */,
 				106967B7201B325700CB7D39 /* R_LoadingView.m in Sources */,
 				1A463EE41F6135B7001C401E /* R_webUploaderViewController.m in Sources */,
+				10294AF92046A8A400A2DA43 /* R_FileTableViewCell.m in Sources */,
 				106967B4201B324600CB7D39 /* R_AlertMessage.m in Sources */,
 				1AFB10951F60F0DA009F49DE /* AppDelegate.m in Sources */,
 				1A40F7FA1F615330001E1E30 /* R_ImagePreviewViewController.m in Sources */,
