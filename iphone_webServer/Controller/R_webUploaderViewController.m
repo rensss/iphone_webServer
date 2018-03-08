@@ -194,6 +194,13 @@
  */
 - (void)webUploader:(GCDWebUploader*)uploader didUploadFileAtPath:(NSString*)path {
     NSLog(@"didUploadFileAtPath---->\n");
+    
+    NSString *title = [path stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%@/",uploader.uploadDirectory]  withString:@""];
+    
+    NSString *alertMessageStr = [NSString stringWithFormat:@"%@ 上传成功",title];
+    
+    RAlertMessage(alertMessageStr,self.view);
+    
     [self reloadTableView];
 }
 
