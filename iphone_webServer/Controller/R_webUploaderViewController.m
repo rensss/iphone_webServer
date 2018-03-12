@@ -93,11 +93,9 @@
         cell = [[R_FileTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"R_FileTableViewCell"];
     }
     
-    R_FileModel *file = [R_FileModel new];
-    file.fileName = self.dataArray[indexPath.row];
-    file.filePath = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
-    cell.file = file;
+    cell.file = self.dataArray[indexPath.row];
     cell.isEditing = self.isEditing;
+    
     return cell;
 }
 
@@ -108,23 +106,18 @@
         
     }else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-
+        
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        // 文件路径
-        NSString *path = [NSString stringWithFormat:@"%@/%@",self.documentPath,self.dataArray[indexPath.row]];
+        R_FileModel *file = self.dataArray[indexPath.row];
+        
         // 文件信息
-        NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil];
-        // 文件名
-        NSString *fileName = self.dataArray[indexPath.row];
-        // 文件后缀
-        NSString *fileSuffix = [[fileName componentsSeparatedByString:@"."] lastObject];
+        NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:file.filePath error:nil];
         // 是否图片后缀
-        if ([fileSuffix isEqualToString:@"jpeg"] || [fileSuffix isEqualToString:@"jpg"] || [fileSuffix isEqualToString:@"png"]) {
+        if ([file.fileType isEqualToString:@"jpeg"] || [file.fileType isEqualToString:@"jpg"] || [file.fileType isEqualToString:@"png"]) {
             
             R_ImagePreviewViewController *imageVC = [[R_ImagePreviewViewController alloc] init];
             
-            imageVC.path = path;
-            
+            imageVC.path = file.filePath;
             //        imageVC.preferredContentSize = [self getImageSizeWithPath:path];
             imageVC.modalPresentationStyle = UIModalPresentationPopover;
             
@@ -275,11 +268,20 @@
 
 - (NSMutableArray *)dataArray {
     if (!_dataArray) {
-        
+        _dataArray = [NSMutableArray array];
         NSFileManager *manager = [NSFileManager defaultManager];
         //获取数据
         //①只获取文件名
-        _dataArray = [NSMutableArray arrayWithArray:[manager contentsOfDirectoryAtPath:self.documentPath error:nil]];
+        NSArray *fileNameArray = [NSMutableArray arrayWithArray:[manager contentsOfDirectoryAtPath:self.documentPath error:nil]];
+        
+        for (NSString *fileName in fileNameArray) {
+            R_FileModel *file = [R_FileModel new];
+            file.fileName = fileName;
+            file.filePath = [NSString stringWithFormat:@"%@/%@",self.documentPath,fileName];
+            file.fileType = [[fileName componentsSeparatedByString:@"."] lastObject];
+            [_dataArray addObject:file];
+        }
+        
     }
     return _dataArray;
 }

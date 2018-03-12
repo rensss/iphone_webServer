@@ -12,5 +12,7 @@
 
 @property (nonatomic, strong) NSString *fileName; /**< 文件名*/
 @property (nonatomic, strong) NSString *filePath; /**< 文件路径*/
+@property (nonatomic, strong) NSString *fileType; /**< 文件类型*/
+@property (nonatomic, strong) NSString *smallFilePath; /**< 小图路径*/
 
 @end
