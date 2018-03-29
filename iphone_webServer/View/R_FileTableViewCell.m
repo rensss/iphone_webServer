@@ -68,38 +68,12 @@
 }
 
 #pragma mark - 函数
-- (void)cacheImage {
-    //先把id记录下来，这是在cell里面加的property
-    self.cellId = self.file.filePath;
+- (UIImage *)cacheImageWithName:(NSString *)imgPath {
     
-    //在这个block里面的id，到这一步是设置为cell.objectIdforThisCell一样的
-    NSString *blockObjectid = self.cellId;
+    UIImage *image = [UIImage imageWithContentsOfFile:imgPath];
+    [self cacheSmallImage:image];
     
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        if (self.file.smallFilePath) {
-            UIImage *image = [[UIImage alloc] initWithContentsOfFile:self.file.smallFilePath];
-            dispatch_async(dispatch_get_main_queue(),
-                           ^{
-                               self.thumbnailImage.image = image;
-                           });
-            
-            image = [[UIImage alloc] initWithContentsOfFile:self.file.filePath];
-            dispatch_async(dispatch_get_main_queue(),
-                           ^{
-                               if ([self.cellId isEqualToString:blockObjectid]) {
-                                   
-                                   //关键在这里，当列表拖动速度很快的时候，cell的property已经被修改（因为reuse了），但是blockObjectid在这个线程里面还是旧的。
-                                   //当它们****不相等****，这个cell就是刷太快而被另外一个线程用上了，也就是说，这张大图已经不再需要输出到cell里面了（被另外一个线程的另外一张图冲掉了）
-                                   //这样一来，在列表快速拖动的时候，瞬间把低清晰的图像给贴上去，等拖动速度慢下来之后，再贴高清晰的图，用户也感觉不出来，也不卡了。
-                                   
-                                   self.thumbnailImage.image = image;
-                               }
-                               
-                           });
-        }else {
-            
-        }
-    });
+    return image;
 }
 
 - (void)cacheSmallImage:(UIImage *)img {
@@ -110,7 +84,7 @@
     UIGraphicsEndImageContext();
     
     NSString *path = NSHomeDirectory();
-    NSString *Pathimg =[path stringByAppendingString:[NSString stringWithFormat:@"/SmallThumbnailImage/%@",self.file.fileName]];
+    NSString *Pathimg = [path stringByAppendingString:[NSString stringWithFormat:@"/SmallThumbnailImage/%@",self.file.fileName]];
     [UIImagePNGRepresentation(newImage) writeToFile:Pathimg atomically:YES];
     
     self.file.smallFilePath = Pathimg;
@@ -126,24 +100,17 @@
     self.titleName.text = file.fileName;
     
     if ([file.fileType isEqualToString:@"jpeg"] || [file.fileType isEqualToString:@"jpg"] || [file.fileType isEqualToString:@"png"]) {
-        
+        __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
-            //计算代码运行时间
-            CFAbsoluteTime startTime = CFAbsoluteTimeGetCurrent();
+            [weakSelf cacheImageWithName:file.filePath];
             
-            UIImage *image = [UIImage imageWithContentsOfFile:file.filePath];
-            [self cacheSmallImage:image];
-            CFAbsoluteTime linkTime = (CFAbsoluteTimeGetCurrent() - startTime);
-            //打印运行时间
-            NSLog(@"Linked in %f ms", linkTime * 1000.0);
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self.indicator stopAnimating];
-                
-                self.thumbnailImage.image = image;
-            });
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                [self.indicator stopAnimating];
+//
+//                self.thumbnailImage.image = image;
+//            });
         });
     }
 }
