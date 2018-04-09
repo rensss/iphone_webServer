@@ -105,7 +105,7 @@
             
             NSError *error;
             NSFileManager *fileManager = [NSFileManager defaultManager];
-            NSString *path = NSHomeDirectory();
+            NSString *path = NSTemporaryDirectory();
             NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
             BOOL res = [fileManager removeItemAtPath:smallImageFilePath error:&error];
             
@@ -200,7 +200,7 @@
         
         [_scrollerView addSubview:self.webServerBtn];
         [_scrollerView addSubview:self.webUploaderbtn];
-        [_scrollerView addSubview:self.cleanBtn];
+//        [_scrollerView addSubview:self.cleanBtn];
     }
     return _scrollerView;
 }
@@ -244,7 +244,7 @@
         [_cleanBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         _cleanBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
         
-        NSString *path = NSHomeDirectory();
+        NSString *path = NSTemporaryDirectory();
         NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
         NSFileManager *fileManager = [NSFileManager defaultManager];
         // 判断是否存在
