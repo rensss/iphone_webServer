@@ -68,26 +68,32 @@
 }
 
 #pragma mark - 函数
-- (UIImage *)cacheImageWithName:(NSString *)imgPath {
+/// 根据地址缓存图片
+- (void)cacheImageWithName:(NSString *)imgPath {
+    UIImage *img = [UIImage imageWithContentsOfFile:imgPath];
     
-    UIImage *image = [UIImage imageWithContentsOfFile:imgPath];
-    [self cacheSmallImage:image];
+    NSString *path = NSHomeDirectory();
+    NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:smallImageFilePath]) {
+        [fileManager createDirectoryAtPath:smallImageFilePath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
     
-    return image;
-}
-
-- (void)cacheSmallImage:(UIImage *)img {
     CGSize newSize = CGSizeMake(100, self.height);
     UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
     [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    NSString *path = NSHomeDirectory();
     NSString *Pathimg = [path stringByAppendingString:[NSString stringWithFormat:@"/SmallThumbnailImage/%@",self.file.fileName]];
     [UIImagePNGRepresentation(newImage) writeToFile:Pathimg atomically:YES];
+}
+
+/// 缓存图片
+- (void)cacheSmallImage:(UIImage *)img {
     
-    self.file.smallFilePath = Pathimg;
+    
+    
 }
 
 #pragma mark - setting
@@ -100,17 +106,30 @@
     self.titleName.text = file.fileName;
     
     if ([file.fileType isEqualToString:@"jpeg"] || [file.fileType isEqualToString:@"jpg"] || [file.fileType isEqualToString:@"png"]) {
+        
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            
-            [weakSelf cacheImageWithName:file.filePath];
-            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                [self.indicator stopAnimating];
-//
-//                self.thumbnailImage.image = image;
-//            });
+            // 主目录地址
+            NSString *path = NSHomeDirectory();
+            // 小图地址
+            NSString *smallImg = [path stringByAppendingString:[NSString stringWithFormat:@"/SmallThumbnailImage/%@",self.file.fileName]];
+            // 文件管理
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            if ([fileManager fileExistsAtPath:smallImg]) {
+                NSLog(@"Exist");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf.indicator stopAnimating];
+                    weakSelf.thumbnailImage.image = [UIImage imageWithContentsOfFile:smallImg];
+                });
+                
+            }else {
+                NSLog(@"Not - Exist");
+                // 缓存大图
+                [weakSelf cacheImageWithName:weakSelf.file.filePath];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    weakSelf.thumbnailImage.image = nil;
+                });
+            }
         });
     }
 }

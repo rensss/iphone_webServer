@@ -18,6 +18,7 @@
 
 @property (nonatomic, strong) UIButton *webServerBtn; /**< 服务器按钮*/
 @property (nonatomic, strong) UIButton *webUploaderbtn; /**< 网页上传按钮*/
+@property (nonatomic, strong) UIButton *cleanBtn; /**< 清理缓存*/
 
 @property (nonatomic, strong) GCDWebServer *webServer; /**< 服务器*/
 
@@ -39,6 +40,9 @@
     self.webServerBtn.frame = CGRectMake(100, 100, self.view.width - 200, 45);
 	self.webUploaderbtn.frame = self.webServerBtn.frame;
     self.webUploaderbtn.y = self.webServerBtn.maxY + 75;
+    
+    self.cleanBtn.frame = self.webUploaderbtn.frame;
+    self.cleanBtn.y = self.webUploaderbtn.maxY + 75;
 }
 
 #pragma mark - 点击事件
@@ -71,6 +75,26 @@
             [self presentViewController:NVC animated:YES completion:nil];
         }
             break;
+        case 2:
+        {
+            NSLog(@"清理缓存");
+            
+            NSError *error;
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            NSString *path = NSHomeDirectory();
+            NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
+            BOOL res = [fileManager removeItemAtPath:smallImageFilePath error:&error];
+            
+            if (res) {
+                RAlertMessage(@"清除缓存成功", self.view);
+                [button setTitle:@"清除缓存" forState:UIControlStateNormal];
+            }else {
+                RAlertMessage(@"清除缓存失败", self.view);
+                NSLog(@"%@",error);
+            }
+        }
+            break;
+            
             
         default:
             break;
@@ -151,6 +175,7 @@
         
         [_scrollerView addSubview:self.webServerBtn];
         [_scrollerView addSubview:self.webUploaderbtn];
+        [_scrollerView addSubview:self.cleanBtn];
     }
     return _scrollerView;
 }
@@ -186,6 +211,37 @@
         [_webUploaderbtn addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
     }
     return _webUploaderbtn;
+}
+
+- (UIButton *)cleanBtn {
+    if (!_cleanBtn) {
+        _cleanBtn = [[UIButton alloc] init];
+        [_cleanBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        _cleanBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+        
+        long long size = 0;
+        NSString *path = NSHomeDirectory();
+        NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        // 判断是否存在
+        if ([fileManager fileExistsAtPath:smallImageFilePath]) {
+            // 存在
+            size = [[fileManager attributesOfItemAtPath:smallImageFilePath error:nil] fileSize];
+        }else {
+            // 不存在 创建
+            [fileManager createDirectoryAtPath:smallImageFilePath withIntermediateDirectories:YES attributes:nil error:nil];
+        }
+        
+        [_cleanBtn setTitle:[NSString stringWithFormat:@"文件缓存 %lld byt",size] forState:UIControlStateNormal];
+
+        _cleanBtn.tag = 1002;
+        _cleanBtn.layer.cornerRadius = 5;
+        _cleanBtn.layer.borderColor = [UIColor lightGrayColor].CGColor;
+        _cleanBtn.layer.borderWidth = 1;
+        [_cleanBtn addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+    }
+    return _cleanBtn;
 }
 
 - (GCDWebServer *)webServer {
