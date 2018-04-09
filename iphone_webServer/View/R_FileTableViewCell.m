@@ -72,28 +72,22 @@
 - (void)cacheImageWithName:(NSString *)imgPath {
     UIImage *img = [UIImage imageWithContentsOfFile:imgPath];
     
-    NSString *path = NSHomeDirectory();
-    NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath:smallImageFilePath]) {
-        [fileManager createDirectoryAtPath:smallImageFilePath withIntermediateDirectories:YES attributes:nil error:nil];
-    }
     
-    CGSize newSize = CGSizeMake(100, self.height);
+    CGFloat height = self.height;
+    CGFloat width = img.size.width * height / img.size.height;
+    
+    // 生成小图片
+    CGSize newSize = CGSizeMake(width, height);
     UIGraphicsBeginImageContextWithOptions(newSize, NO, 0.0);
     [img drawInRect:CGRectMake(0, 0, newSize.width, newSize.height)];
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
+    // 获取主路径
+    NSString *path = NSHomeDirectory();
+    // 写入文件
     NSString *Pathimg = [path stringByAppendingString:[NSString stringWithFormat:@"/SmallThumbnailImage/%@",self.file.fileName]];
     [UIImagePNGRepresentation(newImage) writeToFile:Pathimg atomically:YES];
-}
-
-/// 缓存图片
-- (void)cacheSmallImage:(UIImage *)img {
-    
-    
-    
 }
 
 #pragma mark - setting
@@ -105,6 +99,7 @@
     
     self.titleName.text = file.fileName;
     
+    // 如果是图片类型
     if ([file.fileType isEqualToString:@"jpeg"] || [file.fileType isEqualToString:@"jpg"] || [file.fileType isEqualToString:@"png"]) {
         
         __weak typeof(self) weakSelf = self;
@@ -115,15 +110,16 @@
             NSString *smallImg = [path stringByAppendingString:[NSString stringWithFormat:@"/SmallThumbnailImage/%@",self.file.fileName]];
             // 文件管理
             NSFileManager *fileManager = [NSFileManager defaultManager];
+            // 是否已经缓存小图片
             if ([fileManager fileExistsAtPath:smallImg]) {
-                NSLog(@"Exist");
+                // 切换主线程更新UI
                 dispatch_async(dispatch_get_main_queue(), ^{
+                    // 停止小菊花
                     [weakSelf.indicator stopAnimating];
+                    // 赋值小图片
                     weakSelf.thumbnailImage.image = [UIImage imageWithContentsOfFile:smallImg];
                 });
-                
             }else {
-                NSLog(@"Not - Exist");
                 // 缓存大图
                 [weakSelf cacheImageWithName:weakSelf.file.filePath];
                 dispatch_async(dispatch_get_main_queue(), ^{

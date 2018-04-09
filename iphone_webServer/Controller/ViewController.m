@@ -37,12 +37,36 @@
     
     self.scrollerView.frame = self.view.bounds;
     
-    self.webServerBtn.frame = CGRectMake(100, 100, self.view.width - 200, 45);
+    self.webServerBtn.frame = CGRectMake(100, 100, self.view.width - 200, 35);
 	self.webUploaderbtn.frame = self.webServerBtn.frame;
-    self.webUploaderbtn.y = self.webServerBtn.maxY + 75;
+    self.webUploaderbtn.y = self.webServerBtn.maxY + 35;
     
     self.cleanBtn.frame = self.webUploaderbtn.frame;
-    self.cleanBtn.y = self.webUploaderbtn.maxY + 75;
+    self.cleanBtn.y = self.webUploaderbtn.maxY + 35;
+}
+
+#pragma mark - 函数
+/// 获取文件夹大小
+- (unsigned long long)getFileSize:(NSString *)path {
+    // 总大小
+    unsigned long long size = 0;
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    BOOL isDir = NO;
+    BOOL exist = [manager fileExistsAtPath:path isDirectory:&isDir];
+    
+    // 判断路径是否存在
+    if (!exist) return size;
+    if (isDir) { // 是文件夹
+        NSDirectoryEnumerator *enumerator = [manager enumeratorAtPath:path];
+        for (NSString *subPath in enumerator) {
+            NSString *fullPath = [path stringByAppendingPathComponent:subPath];
+            size += [manager attributesOfItemAtPath:fullPath error:nil].fileSize;
+        }
+    }else{ // 是文件
+        size += [manager attributesOfItemAtPath:path error:nil].fileSize;
+    }
+    return size;
 }
 
 #pragma mark - 点击事件
@@ -88,6 +112,7 @@
             if (res) {
                 RAlertMessage(@"清除缓存成功", self.view);
                 [button setTitle:@"清除缓存" forState:UIControlStateNormal];
+                [fileManager createDirectoryAtPath:smallImageFilePath withIntermediateDirectories:YES attributes:nil error:nil];
             }else {
                 RAlertMessage(@"清除缓存失败", self.view);
                 NSLog(@"%@",error);
@@ -219,21 +244,26 @@
         [_cleanBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
         _cleanBtn.titleLabel.adjustsFontSizeToFitWidth = YES;
         
-        long long size = 0;
         NSString *path = NSHomeDirectory();
         NSString *smallImageFilePath = [path stringByAppendingString:@"/SmallThumbnailImage"];
         NSFileManager *fileManager = [NSFileManager defaultManager];
         // 判断是否存在
         if ([fileManager fileExistsAtPath:smallImageFilePath]) {
-            // 存在
-            size = [[fileManager attributesOfItemAtPath:smallImageFilePath error:nil] fileSize];
+            __weak typeof(self) weakSelf = self;
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                // 存在
+                unsigned long long size = [self getFileSize:smallImageFilePath];
+                CGFloat totalSize = size / 1000.0f / 1000.0f;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [weakSelf.cleanBtn setTitle:[NSString stringWithFormat:@"文件缓存 %.2f M",totalSize] forState:UIControlStateNormal];
+                });
+            });
         }else {
             // 不存在 创建
             [fileManager createDirectoryAtPath:smallImageFilePath withIntermediateDirectories:YES attributes:nil error:nil];
+            [_cleanBtn setTitle:@"清除缓存" forState:UIControlStateNormal];
         }
         
-        [_cleanBtn setTitle:[NSString stringWithFormat:@"文件缓存 %lld byt",size] forState:UIControlStateNormal];
-
         _cleanBtn.tag = 1002;
         _cleanBtn.layer.cornerRadius = 5;
         _cleanBtn.layer.borderColor = [UIColor lightGrayColor].CGColor;
