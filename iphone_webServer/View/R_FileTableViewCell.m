@@ -13,7 +13,6 @@
 @property (nonatomic, strong) UIImageView *markImage; /**< 标记图片*/
 @property (nonatomic, strong) UIImageView *thumbnailImage; /**< 缩略图*/
 @property (nonatomic, strong) UILabel *titleName; /**< 文件名*/
-@property (nonatomic, strong) UIActivityIndicatorView *indicator; /**< 小菊花*/
 
 @property (nonatomic, strong) NSString *cellId; /**< 标识*/
 
@@ -48,7 +47,6 @@
         self.thumbnailImage.centerY = self.height / 2;
     }
     
-    self.indicator.center = CGPointMake(self.thumbnailImage.width/2, self.thumbnailImage.height/2);
     self.titleName.frame = CGRectMake(self.thumbnailImage.maxX + 5, 0, self.width - self.thumbnailImage.maxX - 5, self.height);
 }
 
@@ -96,8 +94,6 @@
     
     _file = file;
     
-    [self.indicator startAnimating];
-    
     self.titleName.text = file.fileName;
     
     // 如果是图片类型
@@ -124,8 +120,6 @@
                 // 缓存大图
                 UIImage *small = [weakSelf cacheImageWithName:weakSelf.file.filePath];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    // 停止小菊花
-                    [weakSelf.indicator stopAnimating];
                     weakSelf.thumbnailImage.image = small;
                 });
 //            }
@@ -147,8 +141,6 @@
         _thumbnailImage = [[UIImageView alloc] init];
         _thumbnailImage.contentMode = UIViewContentModeScaleAspectFill;
         _thumbnailImage.clipsToBounds = YES;
-        
-        [_thumbnailImage addSubview:self.indicator];
     }
     return _thumbnailImage;
 }
@@ -160,15 +152,6 @@
         _titleName.numberOfLines = 0;
     }
     return _titleName;
-}
-
-- (UIActivityIndicatorView *)indicator {
-    if (!_indicator) {
-        _indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-        
-        [_indicator startAnimating];
-    }
-    return _indicator;
 }
 
 @end

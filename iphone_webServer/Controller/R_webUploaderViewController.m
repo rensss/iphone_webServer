@@ -92,7 +92,8 @@
 #pragma mark - 编辑
 - (void)editClick {
     self.isEditing = !self.isEditing;
-    [self.tableView reloadData];
+    [self reloadTableView];
+    
     self.tableView.editing = self.isEditing;
     if (!self.editing) {
         [self.selectFileArray removeAllObjects];
@@ -125,14 +126,17 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    R_FileModel *file = self.dataArray[indexPath.row];
+    
     if (self.isEditing) {
-        R_FileModel *file = self.dataArray[indexPath.row];
+        if (self.selectFileArray.count >= 9) {
+            RAlertMessage(@"一次最多9张图", self.view);
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+            return;
+        }
         [self.selectFileArray addObject:file];
-        
     }else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        
-        R_FileModel *file = self.dataArray[indexPath.row];
         
         // 文件信息
         NSDictionary *dict = [[NSFileManager defaultManager] attributesOfItemAtPath:file.filePath error:nil];
@@ -297,13 +301,15 @@
 }
 
 - (void)buttonClick:(UIButton *)button {
+    
+    __weak typeof(self) weakSelf = self;
+    
     switch (button.tag - 1000) {
         case 0:
         {
             if (self.selectFileArray.count > 0) {
                 self.selectCount = 0;
                 [self.loadingView showInView:self.view];
-                __weak typeof(self) weakSelf = self;
                 for (R_FileModel *file in self.selectFileArray) {
                     dispatch_async(dispatch_get_global_queue(0, 0), ^{
                         [weakSelf saveImageToPhotos:[UIImage imageWithContentsOfFile:file.filePath]];
@@ -316,7 +322,37 @@
             break;
         case 1:
         {
-            
+            self.loadingView.message = @"删除中...";
+            [self.loadingView showInView:self.view];
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                unsigned count = 0;
+                for (R_FileModel *file in weakSelf.selectFileArray) {
+                    NSError *error;
+                    BOOL res = [fileManager removeItemAtPath:file.filePath error:&error];
+                    if (res) {
+                        count ++;
+                    }else {
+                        NSLog(@"%@",error);
+                    }
+                }
+                
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    if (count == weakSelf.selectFileArray.count) {
+                        // 关闭编辑模式
+                        [weakSelf editClick];
+                        [weakSelf.loadingView stop];
+                        RAlertMessage(@"删除成功", weakSelf.view);
+                    }else {
+                        [weakSelf.loadingView stop];
+                        NSString *str = [NSString stringWithFormat:@"%lu条 删除失败",weakSelf.selectFileArray.count - count];
+                        RAlertMessage(str, weakSelf.view);
+                        // 关闭编辑模式
+                        [weakSelf editClick];
+                    }
+                });
+            });
         }
             break;
             
