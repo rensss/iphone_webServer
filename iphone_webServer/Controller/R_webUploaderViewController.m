@@ -10,15 +10,23 @@
 #import "R_ImagePreviewViewController.h"
 #import "R_FileTableViewCell.h"
 #import "GCDWebUploader.h"
+#import <AssetsLibrary/AssetsLibrary.h>
+#import <Photos/Photos.h>
 
 @interface R_webUploaderViewController () <GCDWebUploaderDelegate,UITableViewDelegate,UITableViewDataSource,UIPopoverPresentationControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *dataArray; /**< 数据源*/
+@property (nonatomic, strong) NSMutableArray *selectFileArray; /**< 选中的数据*/
 @property (nonatomic, strong) UITableView *tableView; /**< 列表*/
 @property (nonatomic, copy) NSString *documentPath; /**< 本地文件夹路径*/
 @property (nonatomic, strong) UILabel *addressLabel; /**< 地址*/
 @property (nonatomic, strong) GCDWebUploader *webUploader; /**< 网页上传*/
 @property (nonatomic, assign) BOOL isEditing; /**< 是否编辑*/
+@property (nonatomic, strong) R_LoadingView *loadingView; /**< 加载中...*/
+@property (nonatomic, strong) UIButton *saveButton; /**< 保存按钮*/
+@property (nonatomic, strong) UIButton *deleteButton; /**< 删除按钮*/
+@property (nonatomic, assign) NSInteger selectCount; /**< 选中的个数*/
+
 @end
 
 @implementation R_webUploaderViewController
@@ -50,7 +58,10 @@
     [self.view addSubview:self.addressLabel];
     [self.view addSubview:self.tableView];
     
-    self.addressLabel.text = [NSString stringWithFormat:@"浏览器访问:%@",self.webUploader.serverURL];
+    self.addressLabel.text = [NSString stringWithFormat:@"浏览器访问->%@",self.webUploader.serverURL];
+    
+    [self.view addSubview:self.saveButton];
+    [self.view addSubview:self.deleteButton];
 }
 
 - (void)viewDidLayoutSubviews {
@@ -61,6 +72,11 @@
     CGFloat addressLabelMaxY = self.addressLabel.frame.size.height + self.addressLabel.frame.origin.y;
     
     self.tableView.frame = CGRectMake(0, addressLabelMaxY, self.view.frame.size.width, self.view.frame.size.height - addressLabelMaxY);
+    
+    self.saveButton.x = (self.view.width - 200) / 3;
+    self.deleteButton.maxX = self.view.width - self.saveButton.x;
+    
+    self.deleteButton.maxY = self.saveButton.maxY = self.view.height - self.safeAreaInsets.bottom - 10;
 }
 
 - (void)dealloc {
@@ -78,6 +94,12 @@
     self.isEditing = !self.isEditing;
     [self.tableView reloadData];
     self.tableView.editing = self.isEditing;
+    if (!self.editing) {
+        [self.selectFileArray removeAllObjects];
+        self.deleteButton.hidden = self.saveButton.hidden = YES;
+    }else {
+        self.deleteButton.hidden = self.saveButton.hidden = NO;
+    }
 }
 
 #pragma mark - 代理
@@ -102,12 +124,14 @@
 #pragma mark -- UITableViewDelegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     if (self.isEditing) {
+        R_FileModel *file = self.dataArray[indexPath.row];
+        [self.selectFileArray addObject:file];
         
     }else {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         
-        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         R_FileModel *file = self.dataArray[indexPath.row];
         
         // 文件信息
@@ -139,6 +163,11 @@
             [self presentViewController:alertController animated:YES completion:nil];
         }
     }
+}
+
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
+    R_FileModel *file = self.dataArray[indexPath.row];
+    [self.selectFileArray removeObject:file];
 }
 
 
@@ -231,23 +260,32 @@
 }
 
 #pragma mark - 函数
+/// 刷新列表
 - (void)reloadTableView {
     self.dataArray = nil;
     [self.tableView reloadData];
 }
 
-//保存照片结果回调
+/// 保存照片结果回调
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+    self.selectCount ++;
     if (error) {
-        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"保存失败" message:nil preferredStyle:UIAlertControllerStyleAlert];
-        
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleCancel handler:nil];
-        [alertController addAction:cancelAction];
-        
-        [self presentViewController:alertController animated:YES completion:nil];
+        RAlertMessage(@"保存失败!", self.view);
+        NSLog(@"%@",error);
         return;
     }
+    if (self.selectFileArray.count == self.selectCount) {
+        [self.loadingView stop];
+        RAlertMessage(@"保存成功!", self.view);
+    }
 }
+
+#pragma mark - 保存到相册
+/// 保存到相册
+- (void)saveImageToPhotos:(UIImage *)savedImage {
+    UIImageWriteToSavedPhotosAlbum(savedImage, self, @selector(image:didFinishSavingWithError:contextInfo:), NULL);
+}
+
 
 #pragma mark - 点击事件
 - (void)handleTapOnLabel:(UILabel *)label {
@@ -256,6 +294,35 @@
     [pasteboard setString:self.webUploader.serverURL.absoluteString];
     
     RAlertMessage(@"已复制到剪切板", self.view);
+}
+
+- (void)buttonClick:(UIButton *)button {
+    switch (button.tag - 1000) {
+        case 0:
+        {
+            if (self.selectFileArray.count > 0) {
+                self.selectCount = 0;
+                [self.loadingView showInView:self.view];
+                __weak typeof(self) weakSelf = self;
+                for (R_FileModel *file in self.selectFileArray) {
+                    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                        [weakSelf saveImageToPhotos:[UIImage imageWithContentsOfFile:file.filePath]];
+                    });
+                }
+            }else {
+                RAlertMessage(@"还未选择文件", self.view);
+            }
+        }
+            break;
+        case 1:
+        {
+            
+        }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 #pragma mark - getting
@@ -284,6 +351,13 @@
         
     }
     return _dataArray;
+}
+
+- (NSMutableArray *)selectFileArray {
+    if (!_selectFileArray) {
+        _selectFileArray = [NSMutableArray array];
+    }
+    return _selectFileArray;
 }
 
 - (GCDWebUploader *)webUploader {
@@ -320,6 +394,47 @@
         _tableView.tableFooterView = [UIView new];
     }
     return _tableView;
+}
+
+- (R_LoadingView *)loadingView {
+    if (!_loadingView) {
+        _loadingView = [[R_LoadingView alloc] initWithMessage:@"保存中..."];
+    }
+    return _loadingView;
+}
+
+- (UIButton *)saveButton {
+    if (!_saveButton) {
+        _saveButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 50)];
+
+        [_saveButton setTitle:@"保存" forState:UIControlStateNormal];
+        [_saveButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _saveButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+        
+        _saveButton.hidden = YES;
+        _saveButton.tag = 1000;
+        _saveButton.layer.cornerRadius = 5;
+        _saveButton.backgroundColor = [UIColor grayColor];
+        [_saveButton addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _saveButton;
+}
+
+- (UIButton *)deleteButton {
+    if (!_deleteButton) {
+        _deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 50)];
+        
+        [_deleteButton setTitle:@"删除" forState:UIControlStateNormal];
+        [_deleteButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        _deleteButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+        
+        _deleteButton.hidden = YES;
+        _deleteButton.tag = 1001;
+        _deleteButton.layer.cornerRadius = 5;
+        _deleteButton.backgroundColor = [UIColor redColor];
+        [_deleteButton addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _deleteButton;
 }
 
 - (void)didReceiveMemoryWarning {
