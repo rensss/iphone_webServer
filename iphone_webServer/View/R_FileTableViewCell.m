@@ -70,6 +70,7 @@
 - (UIImage *)cacheImageWithName:(NSString *)imgPath {
     UIImage *img = [UIImage imageWithContentsOfFile:imgPath];
     
+    // 小图宽高
     CGFloat height = self.height;
     CGFloat width = img.size.width * height / img.size.height;
     
