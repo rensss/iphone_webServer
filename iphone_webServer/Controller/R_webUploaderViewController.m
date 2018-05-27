@@ -67,7 +67,7 @@
 - (void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    self.addressLabel.frame = CGRectMake(50, self.navigationController.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height + 1, self.view.frame.size.width - 100, 25);
+    self.addressLabel.frame = CGRectMake(0, self.navigationBarHeight + self.statusBarHeight, self.view.width, 25);
     
     CGFloat addressLabelMaxY = self.addressLabel.frame.size.height + self.addressLabel.frame.origin.y;
     
@@ -274,8 +274,9 @@
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
     self.selectCount ++;
     if (error) {
-        RAlertMessage(@"保存失败!", self.view);
+//        RAlertMessage(@"保存失败!", self.view);
         NSLog(@"%@",error);
+		[self saveImageToPhotos:image];
         return;
     }
     if (self.selectFileArray.count == self.selectCount) {

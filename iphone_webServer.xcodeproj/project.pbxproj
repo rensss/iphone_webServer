@@ -178,7 +178,6 @@
 				1AFB108C1F60F0DA009F49DE /* Sources */,
 				1AFB108D1F60F0DA009F49DE /* Frameworks */,
 				1AFB108E1F60F0DA009F49DE /* Resources */,
-				578619D1AA0EDFB2CD76426C /* [CP] Embed Pods Frameworks */,
 				8E007FECB8E1C31F800E654F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -238,21 +237,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		578619D1AA0EDFB2CD76426C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iphone_webServer/Pods-iphone_webServer-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6A8AB7EBE47310B8CF33804A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -282,7 +266,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GCDWebUploader.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
