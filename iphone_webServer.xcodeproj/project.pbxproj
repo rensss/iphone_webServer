@@ -261,7 +261,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-iphone_webServer/Pods-iphone_webServer-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-iphone_webServer/Pods-iphone_webServer-resources.sh",
 				"${PODS_ROOT}/GCDWebServer/GCDWebUploader/GCDWebUploader.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
@@ -270,7 +270,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-iphone_webServer/Pods-iphone_webServer-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-iphone_webServer/Pods-iphone_webServer-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
